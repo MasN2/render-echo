@@ -12,7 +12,7 @@ async def echo(websocket):
         await websocket.send(message)
 
 
-async def health_check(path, request_headers):
+def health_check(connection, request):
     if path == "/healthz":
         return connection.respond(HTTPStatus.OK, b"OK\n")
 
