@@ -14,11 +14,7 @@ async def echo(websocket):
 
 async def health_check(path, request_headers):
     if path == "/healthz":
-        return http.HTTPStatus.OK, [], b"OK\n"
-
-    if request.method == "HEAD":
-        # Return a custom response without a body
-        return (200, {"Content-Type": "text/html"}, b"")
+        return connection.respond(HTTPStatus.OK, b"OK\n")
 
 
 async def main():
