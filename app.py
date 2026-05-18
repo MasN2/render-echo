@@ -15,7 +15,7 @@ async def echo(websocket):
 
 def health_check(connection, request):
     print(f"{connection=}{request=}")
-    if path == "/healthz":
+    if request.path == "/healthz":
         return connection.respond(HTTPStatus.OK, b"OK\n")
 
 
