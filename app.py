@@ -25,7 +25,7 @@ async def main():
     stop = loop.create_future()
     loop.add_signal_handler(signal.SIGTERM, stop.set_result, None)
 
-    port = int(os.getenviron["PORT"])
+    port = int(os.environ["PORT"])
     async with websockets.serve(
         echo,
         host="",
