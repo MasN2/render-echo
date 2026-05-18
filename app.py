@@ -3,9 +3,8 @@
 import asyncio
 import http
 import signal
-import os
 
-import websockets
+from websockets.asyncio.server import serve
 
 
 async def echo(websocket):
@@ -14,25 +13,15 @@ async def echo(websocket):
 
 
 def health_check(connection, request):
-    print(f"{connection=}{request=}")
     if request.path == "/healthz":
-        return connection.respond(HTTPStatus.OK, b"OK\n")
+        return connection.respond(http.HTTPStatus.OK, "OK\n")
 
 
 async def main():
-    # Set the stop condition when receiving SIGTERM.
-    loop = asyncio.get_running_loop()
-    stop = loop.create_future()
-    loop.add_signal_handler(signal.SIGTERM, stop.set_result, None)
-
-    port = int(os.environ["PORT"])
-    async with websockets.serve(
-        echo,
-        host="",
-        port=port,
-        process_request=health_check,
-    ):
-        await stop
+    async with serve(echo, "", 10080, process_request=health_check) as server:
+        loop = asyncio.get_running_loop()
+        loop.add_signal_handler(signal.SIGTERM, server.close)
+        await server.wait_closed()
 
 
 if __name__ == "__main__":
