@@ -3,6 +3,7 @@
 import asyncio
 import http
 import signal
+import os
 
 from websockets.asyncio.server import serve
 
@@ -18,7 +19,8 @@ def health_check(connection, request):
 
 
 async def main():
-    async with serve(echo, "", 10080, process_request=health_check) as server:
+    port = int(os.environ["PORT"])
+    async with serve(echo, "", port, process_request=health_check) as server:
         loop = asyncio.get_running_loop()
         loop.add_signal_handler(signal.SIGTERM, server.close)
         await server.wait_closed()
@@ -26,3 +28,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
